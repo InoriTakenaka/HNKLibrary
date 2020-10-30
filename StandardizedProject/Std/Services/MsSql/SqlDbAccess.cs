@@ -27,13 +27,16 @@ namespace StandardizedProject.Std.Services.MsSql {
             }
         }
         public int DeleteRange<E>(IEnumerable<E> entities) where E : class, new() {
-            List<string> sqlBundle = entities.Select(p => SqlCommandHelper.GetInstance().DeleteSql(p)).ToList();
+            string commandText = SqlCommandHelper.GetInstance().DeleteSql(entities.First());
             int result = 0;
             using (SqlConnection connection = new SqlConnection(connectionString_)) {
                 using (SqlCommand sqlCommand = new SqlCommand()) {
-                    foreach (string sql in sqlBundle) {
-                        sqlCommand.CommandText = sql;
-                        result += ExecuteNonQuery(sqlCommand, connection);
+                    sqlCommand.CommandText = commandText;
+                    foreach (var e in entities) {
+                        SqlParameter[] sqlParameters
+                            = GetParameters(e);
+                        result += ExecuteNonQuery(sqlCommand, connection, sqlParameters);
+                        sqlCommand.Parameters.Clear();
                     }
                     return result;
                 }
@@ -116,15 +119,15 @@ namespace StandardizedProject.Std.Services.MsSql {
             }
         }
         public int InsertRange<E>(IEnumerable<E> entities) where E : class, new() {
-            List<string> sqlBundle = entities.Select(p => SqlCommandHelper.GetInstance().InsertSql(p)).ToList();
+            string commandText = SqlCommandHelper.GetInstance().InsertSql(entities.First());
             int result = 0;
             using (SqlConnection connection = new SqlConnection(connectionString_)) {
                 using (SqlCommand sqlCommand = new SqlCommand()) {
-                    int index = 0;
-                    foreach (string sql in sqlBundle) {
-                        sqlCommand.CommandText = sql;
-                        var parameters = GetParameters(entities[0]);
+                    sqlCommand.CommandText = commandText;
+                    foreach (var e in entities) {
+                        var parameters = GetParameters(e);
                         result += ExecuteNonQuery(sqlCommand, connection, parameters);
+                        sqlCommand.Parameters.Clear();
                     }
                     return result;
                 }
@@ -135,18 +138,22 @@ namespace StandardizedProject.Std.Services.MsSql {
             using(SqlConnection connection=new SqlConnection(connectionString_)) {
                 using(SqlCommand sqlCommand = new SqlCommand()) {
                     sqlCommand.CommandText = commandText;
+                    SqlParameter[] sqlParameters = GetParameters(e);
                     return (ExecuteNonQuery(sqlCommand, connection) == 1);
                 }
             }
         }
         public int UpdateRange<E>(IEnumerable<E> entities) where E : class, new() {
-            List<string> sqlBundle = entities.Select(p => SqlCommandHelper.GetInstance().UpdateSql(p)).ToList();
-            using(SqlConnection connection=new SqlConnection(connectionString_)) {
+            string commandText = SqlCommandHelper.GetInstance().UpdateSql(entities.First());
+            using (SqlConnection connection=new SqlConnection(connectionString_)) {
                 using(SqlCommand sqlCommand = new SqlCommand()) {
                     int result = 0;
-                    foreach(string sql in sqlBundle) {
-                        result += ExecuteNonQuery(sqlCommand, connection);
-                    }
+                    sqlCommand.CommandText = commandText;
+                    foreach(var e in entities) {
+                        SqlParameter[] sqlParameters = GetParameters(e);
+                        result += ExecuteNonQuery(sqlCommand, connection,sqlParameters);
+                        sqlCommand.Parameters.Clear();
+                    }                    
                     return result;
                 }
             }
@@ -154,7 +161,7 @@ namespace StandardizedProject.Std.Services.MsSql {
 
         protected SqlParameter[] GetParameters<E>(E e) {
             return typeof(E).GetProperties().Select(p => {
-                return new SqlParameter(p.Name, p.GetValue(e));
+                return new SqlParameter($"@{p.Name}", p.GetValue(e, null));
             }).ToArray();
         }
        
