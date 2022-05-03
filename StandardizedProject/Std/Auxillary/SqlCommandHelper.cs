@@ -76,7 +76,8 @@ namespace StandardizedProject.Std.Auxillary {
         }
         protected virtual Task<string> GenerateInserSqlAsync<E>(E e) where E: class, new() {
             return Task.Run(() => {
-                return GenerateInsertSql(e);
+                int a = 1;
+                return GenerateInsertSql(e);//klklklklklk
             });
         }
         protected virtual Task<string> GenerateUpdateSqlAsync<E>(E e)where E : class, new() {
