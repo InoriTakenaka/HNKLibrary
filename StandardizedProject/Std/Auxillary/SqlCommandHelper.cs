@@ -74,13 +74,13 @@ namespace StandardizedProject.Std.Auxillary {
             string tableName = typeof(E).Name;
             return $"DELETE FROM {tableName} WHERE ID=@ID";
         }
-        protected virtual async Task<string> GenerateInserSqlAsync<E>(E e) where E: class, new() {
-            return await Task.Run(() => {
+        protected virtual Task<string> GenerateInserSqlAsync<E>(E e) where E: class, new() {
+            return Task.Run(() => {
                 return GenerateInsertSql(e);
             });
         }
-        protected virtual async Task<string> GenerateUpdateSqlAsync<E>(E e)where E : class, new() {
-            return await Task.Run(() => {
+        protected virtual Task<string> GenerateUpdateSqlAsync<E>(E e)where E : class, new() {
+            return  Task.Run(() => {
                 return GenerateUpdateSql(e);
             });
         }
