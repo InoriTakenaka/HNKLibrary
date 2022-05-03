@@ -75,9 +75,8 @@ namespace StandardizedProject.Std.Auxillary {
             return $"DELETE FROM {tableName} WHERE ID=@ID";
         }
         protected virtual Task<string> GenerateInserSqlAsync<E>(E e) where E: class, new() {
-            return Task.Run(() => {
-                int a = 1;
-                return GenerateInsertSql(e);//klklklklklk
+            return Task.Run(() => {                
+                return GenerateInsertSql(e);
             });
         }
         protected virtual Task<string> GenerateUpdateSqlAsync<E>(E e)where E : class, new() {
