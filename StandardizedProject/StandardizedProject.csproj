@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Std\Auxillary\Class1.cs" />
     <Compile Include="Std\Auxillary\EntityMapping.cs" />
     <Compile Include="Std\Auxillary\EntityTag.cs" />
     <Compile Include="Std\Auxillary\SqlCommandHelper.cs" />
