@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 namespace StandardizedProject.Std.Auxillary {
     class Class1 {
+        public int MyProperty { get; set; }
+        
     }
 }
